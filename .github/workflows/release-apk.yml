@@ -32,8 +32,10 @@ jobs:
             exit 1
           fi
 
-          # Supports both raw Base64 and Windows certutil Base64 output.
-          printf '%s' "$KEYSTORE_B64"             | sed '/-----BEGIN [^-]*-----/d;/-----END [^-]*-----/d'             | tr -d '\r\n[:space:]'             | base64 --decode > release-key.jks
+          printf '%s' "$KEYSTORE_B64" \
+            | sed '/-----BEGIN [^-]*-----/d;/-----END [^-]*-----/d' \
+            | tr -d '\r\n[:space:]' \
+            | base64 --decode > release-key.jks
 
           test -s release-key.jks || {
             echo "ERROR: release-key.jks was not created."
@@ -47,7 +49,11 @@ jobs:
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         shell: bash
         run: |
-          gradle :app:assembleRelease             -PRELEASE_STORE_FILE=release-key.jks             -PRELEASE_STORE_PASSWORD="$RELEASE_STORE_PASSWORD"             -PRELEASE_KEY_ALIAS="$RELEASE_KEY_ALIAS"             -PRELEASE_KEY_PASSWORD="$RELEASE_KEY_PASSWORD"
+          gradle :app:assembleRelease \
+            -PRELEASE_STORE_FILE="$GITHUB_WORKSPACE/release-key.jks" \
+            -PRELEASE_STORE_PASSWORD="$RELEASE_STORE_PASSWORD" \
+            -PRELEASE_KEY_ALIAS="$RELEASE_KEY_ALIAS" \
+            -PRELEASE_KEY_PASSWORD="$RELEASE_KEY_PASSWORD"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
