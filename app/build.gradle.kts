@@ -8,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.snappbox.bikerapp"
+        applicationId = "com.example.snappvoiceassistant"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
